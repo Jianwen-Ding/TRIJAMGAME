@@ -2,9 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class TeleportPlayer : MonoBehaviour
 {
+    [SerializeField]
+    int health;
+    [SerializeField]
+    float invulTime;
+    [SerializeField]
+    float invulTimeLeft;
 
     public Transform player;
     public List<Transform> teleporters = new List<Transform>();
@@ -15,18 +23,29 @@ public class TeleportPlayer : MonoBehaviour
     public LineRenderer lineRenderer;
     public Vector3 targetLocation;
 
-    // Start is called before the first frame update
-    void Start()
+    public int getHealth()
     {
-        for (int i = 0; i < 5; i++)
+        return health;
+    }
+    public void damage()
+    {
+        if (invulTimeLeft < 0)
         {
-            teleporters.Add(GameObject.Find($"Teleporter{i}").transform);
+            health--;
+            invulTimeLeft = invulTime;
         }
     }
-
     // Update is called once per frame
     void Update()
     {
+        if (health < 1 || bossScript.timePassed > 60)
+        {
+            SceneManager.LoadScene("Lose");
+        }
+        if (invulTimeLeft >= 0)
+        {
+            invulTimeLeft -= Time.deltaTime;
+        }
         if (onCooldown == false)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1)) //Change the button if needed
@@ -53,17 +72,19 @@ public class TeleportPlayer : MonoBehaviour
                 TeleportTo(4);
                 StartCoroutine("Cooldown");
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                targetLocation = teleporters[4].position;
-                TeleportTo(5);
-                StartCoroutine("Cooldown");
-            }
         }
     }
     private void TeleportTo(int index)
     {
         RaycastHit2D hitInfo = Physics2D.Raycast(player.position, targetLocation);
+        if(hitInfo.collider != null )
+        {
+            if (hitInfo.collider.gameObject.GetComponent<bossScript>() != null)
+            {
+                hitInfo.collider.gameObject.GetComponent<bossScript>().health--;
+            }
+            
+        }
         lineRenderer.SetPosition(0, player.position);
         lineRenderer.SetPosition(1, targetLocation);
         player.position = teleporters[index - 1].position;
