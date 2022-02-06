@@ -11,34 +11,44 @@ public class bossScript : MonoBehaviour
     GameObject[] Teleporters;
     [SerializeField]
     public static float timePassed = 0;
-    //phase 1
-    [SerializeField]
-    float temporaryAngle0 = 0;
+    //phase 0
     [SerializeField]
     float temporarySpd0;
     [SerializeField]
-    float temporaryRd0;
-    //phase 2
+    int temporaryIndex0 = 0;
+    [SerializeField]
+    float temporarySwitchTime0;
+    [SerializeField]
+    float temporarySwitchTimeLeft0 = 0;
+    //phase 1
+    [SerializeField]
+    float temporaryAngle1 = 0;
     [SerializeField]
     float temporarySpd1;
     [SerializeField]
-    int temporaryIndex1 = 0;
+    float temporaryRd1;
+    bool hasStarted1 = false;
+    //phase 2
     [SerializeField]
-    float temporarySwitchTime1;
+    float temporarySpd2;
     [SerializeField]
-    float temporarySwitchTimeLeft1 = 0;
+    int temporaryIndex2 = 0;
+    [SerializeField]
+    float temporarySwitchTime2;
+    [SerializeField]
+    float temporarySwitchTimeLeft2 = 0;
     //phase 3
     [SerializeField]
-    float temporaryAcel2;
+    float temporaryAcel3;
     [SerializeField]
-    float temporaryMaxVel2;
+    float temporaryMaxVel3;
     //phase 4
     [SerializeField]
-    float temporaryAngle3 = 0;
+    float temporaryAngle4 = 0;
     [SerializeField]
-    float temporarySpd3;
+    float temporarySpd4;
     [SerializeField]
-    float temporaryRd3;
+    float temporaryRd4;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,33 +76,55 @@ public class bossScript : MonoBehaviour
         {
             SceneManager.LoadScene("Win");
         }
-        if(timePassed < 16)
+        if (timePassed < 8)
         {
-            temporaryAngle0 += temporarySpd0 * Time.deltaTime;
-            transform.position = circleScript.findLocation(temporaryRd0,temporaryAngle0, new Vector2(0,0));
+            temporarySwitchTimeLeft0 -= Time.deltaTime;
+            if (temporarySwitchTimeLeft0 <= 0)
+            {
+                temporarySwitchTimeLeft0 = temporarySwitchTime2;
+                temporaryIndex0++;
+                if(temporaryIndex0 >= Teleporters.Length)
+                {
+                    temporaryIndex0 = 0;
+                }
+            }
+            gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporarySpd0, findAngle(gameObject.transform.position, Teleporters[temporaryIndex0].transform.position), new Vector2(0, 0));
+        }
+        else if (timePassed < 16)
+        {
+            if (hasStarted1)
+            {
+                temporaryAngle1 += temporarySpd1 * Time.deltaTime;
+                transform.position = circleScript.findLocation(temporaryRd1, temporaryAngle1, new Vector2(0, 0));
+            }
+            else
+            {
+                hasStarted1 = true;
+                temporaryAngle1 = findAngle(new Vector3(0,0), transform.position);
+            }
         }
         else if (timePassed < 27)
         {
-            temporarySwitchTimeLeft1 -= Time.deltaTime;
-            if (temporarySwitchTimeLeft1 <= 0)
+            temporarySwitchTimeLeft2 -= Time.deltaTime;
+            if (temporarySwitchTimeLeft2 <= 0)
             {
-                temporarySwitchTimeLeft1 = temporarySwitchTime1;
-                temporaryIndex1 = Random.Range(0,Teleporters.Length);
+                temporarySwitchTimeLeft2 = temporarySwitchTime2;
+                temporaryIndex2 = Random.Range(0,Teleporters.Length);
             }
-            gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporarySpd1, findAngle(gameObject.transform.position, Teleporters[temporaryIndex1].transform.position), new Vector2(0, 0));
+            gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporarySpd2, findAngle(gameObject.transform.position, Teleporters[temporaryIndex2].transform.position), new Vector2(0, 0));
         }
-        else if (timePassed < 50)
+        else if (timePassed < 38)
         {
-            gameObject.GetComponent<Rigidbody2D>().AddForce(circleScript.findLocation(temporaryAcel2, findAngle(gameObject.transform.position, Player.transform.position), new Vector2(0, 0)), ForceMode2D.Force);
-            if (Mathf.Sqrt(gameObject.GetComponent<Rigidbody2D>().velocity.x* gameObject.GetComponent<Rigidbody2D>().velocity.x + gameObject.GetComponent<Rigidbody2D>().velocity.y* gameObject.GetComponent<Rigidbody2D>().velocity.y) > temporaryMaxVel2)
+            gameObject.GetComponent<Rigidbody2D>().AddForce(circleScript.findLocation(temporaryAcel3, findAngle(gameObject.transform.position, Player.transform.position), new Vector2(0, 0)), ForceMode2D.Force);
+            if (Mathf.Sqrt(gameObject.GetComponent<Rigidbody2D>().velocity.x* gameObject.GetComponent<Rigidbody2D>().velocity.x + gameObject.GetComponent<Rigidbody2D>().velocity.y* gameObject.GetComponent<Rigidbody2D>().velocity.y) > temporaryMaxVel3)
             {
-                gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporaryMaxVel2, findAngle(gameObject.GetComponent<Rigidbody2D>().velocity.x, gameObject.GetComponent<Rigidbody2D>().velocity.y), new Vector2(0, 0));
+                gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporaryMaxVel3, findAngle(gameObject.GetComponent<Rigidbody2D>().velocity.x, gameObject.GetComponent<Rigidbody2D>().velocity.y), new Vector2(0, 0));
             }
         }
         else
         {
-            temporaryAngle3 += temporarySpd3 * Time.deltaTime;
-            transform.position = circleScript.findLocation(temporaryRd3, temporaryAngle3, new Vector2(0, 0));
+            temporaryAngle4 += temporarySpd4 * Time.deltaTime;
+            transform.position = circleScript.findLocation(temporaryRd4, temporaryAngle4, new Vector2(0, 0));
         }
     }
 }
