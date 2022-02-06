@@ -8,6 +8,8 @@ public class bossScript : MonoBehaviour
     [SerializeField]
     GameObject Player;
     [SerializeField]
+    GameObject[] Teleporters;
+    [SerializeField]
     public static float timePassed = 0;
     //phase 1
     [SerializeField]
@@ -19,6 +21,12 @@ public class bossScript : MonoBehaviour
     //phase 2
     [SerializeField]
     float temporarySpd1;
+    [SerializeField]
+    int temporaryIndex1 = 0;
+    [SerializeField]
+    float temporarySwitchTime1;
+    [SerializeField]
+    float temporarySwitchTimeLeft1 = 0;
     //phase 3
     [SerializeField]
     float temporaryAcel2;
@@ -65,7 +73,13 @@ public class bossScript : MonoBehaviour
         }
         else if (timePassed < 27)
         {
-            gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporarySpd1, findAngle(gameObject.transform.position, Player.transform.position), new Vector2(0, 0));
+            temporarySwitchTimeLeft1 -= Time.deltaTime;
+            if (temporarySwitchTimeLeft1 <= 0)
+            {
+                temporarySwitchTimeLeft1 = temporarySwitchTime1;
+                temporaryIndex1 = Random.Range(0,Teleporters.Length);
+            }
+            gameObject.GetComponent<Rigidbody2D>().velocity = circleScript.findLocation(temporarySpd1, findAngle(gameObject.transform.position, Teleporters[temporaryIndex1].transform.position), new Vector2(0, 0));
         }
         else if (timePassed < 50)
         {

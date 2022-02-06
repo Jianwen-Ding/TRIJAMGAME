@@ -1112,10 +1112,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 30
   Player: {fileID: 1304296219}
+  Teleporters: []
   temporaryAngle0: 0
   temporarySpd0: -50
   temporaryRd0: 3.5
   temporarySpd1: 5
+  temporaryIndex1: 0
+  temporarySwitchTime1: 0
+  temporarySwitchTimeLeft1: 0
   temporaryAcel2: 7
   temporaryMaxVel2: 9
   temporaryAngle3: 0
@@ -1416,7 +1420,7 @@ PrefabInstance:
     - target: {fileID: 4499586569973308016, guid: e06c8983e4f593244b8351fec38898c0,
         type: 3}
       propertyPath: cooldownTime
-      value: 0.5
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4499586569973308016, guid: e06c8983e4f593244b8351fec38898c0,
         type: 3}
