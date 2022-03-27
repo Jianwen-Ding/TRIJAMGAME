@@ -45,48 +45,28 @@ public class TeleportPlayer : MonoBehaviour
         {
             invulTimeLeft -= Time.deltaTime;
         }
-        if (onCooldown == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1)) //Change the button if needed
-            {
-                targetLocation = teleporters[0].position;
-                TeleportTo(1);
-                StartCoroutine("Cooldown");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                targetLocation = teleporters[1].position;
-                TeleportTo(2);
-                StartCoroutine("Cooldown");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                targetLocation = teleporters[2].position;
-                TeleportTo(3);
-                StartCoroutine("Cooldown");
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                targetLocation = teleporters[3].position;
-                TeleportTo(4);
-                StartCoroutine("Cooldown");
-            }
-        }
     }
-    private void TeleportTo(int index)
+    public static void TeleportTo(GameObject teleportToo)
     {
-        RaycastHit2D hitInfo = Physics2D.Raycast(player.position, targetLocation);
-        if(hitInfo.collider != null )
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        TeleportPlayer tp = player.GetComponent<TeleportPlayer>();
+        if (tp.onCooldown == false)
         {
-            if (hitInfo.collider.gameObject.GetComponent<bossScript>() != null)
+            tp.targetLocation = teleportToo.transform.position;
+            RaycastHit2D hitInfo = Physics2D.Raycast(player.transform.position, teleportToo.transform.position);
+            if (hitInfo.collider != null)
             {
-                hitInfo.collider.gameObject.GetComponent<bossScript>().health--;
+                if (hitInfo.collider.gameObject.GetComponent<bossScript>() != null)
+                {
+                    hitInfo.collider.gameObject.GetComponent<bossScript>().health--;
+                }
+
             }
-            
+            tp.lineRenderer.SetPosition(0, player.transform.position);
+            tp.lineRenderer.SetPosition(1, tp.targetLocation);
+            player.transform.position = teleportToo.transform.position;
+            tp.StartCoroutine("Cooldown");
         }
-        lineRenderer.SetPosition(0, player.position);
-        lineRenderer.SetPosition(1, targetLocation);
-        player.position = teleporters[index - 1].position;
     }
 
     IEnumerator Cooldown()

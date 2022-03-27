@@ -52,6 +52,7 @@ public class bossScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Teleporters = GameObject.FindGameObjectsWithTag("Tele");
         timePassed = 0;
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -71,6 +72,7 @@ public class bossScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         timePassed += Time.deltaTime;
         if (health < 1)
         {
